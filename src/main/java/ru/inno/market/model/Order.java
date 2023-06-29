@@ -20,9 +20,9 @@ public class Order {
         discountApplied = false;
     }
 
-    public Map<Item, Integer> getItems() {
-        return cart;
-    }
+//    public Map<Item, Integer> getItems() {
+//        return cart;
+//    }
 
     public int getId() {
         return id;
