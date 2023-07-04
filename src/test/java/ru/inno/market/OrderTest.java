@@ -1,5 +1,8 @@
 package ru.inno.market;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.inno.market.core.MarketService;
 import ru.inno.market.model.*;
@@ -7,49 +10,33 @@ import ru.inno.market.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTest {
+    @BeforeEach
+     public void setUp() {
+    Client client = new Client(0, "Рая");
+    Order order = new Order(0, client);
+}
+
     @Test
-    // проверка получения правильного id заказа
+    @DisplayName("Возвращение корректного ID созданного заказа")
     public void testCorrectIdWhenCreateOrder() {
         Client client = new Client(0, "Рая");
         Order order = new Order(0, client);
-
-        int actual = order.getId();
-        int expected = 0;
-
-        assertEquals(actual, expected);
+        assertEquals(0, order.getId());
     }
-//    @Test
-//    public void testGetId() {
-//        Client expectedClient = new Client(0, "Рая");
-//        Order order = new Order(0, expectedClient);
-//        assertEquals(order.getId(), 0);
-//    }
-
-//    @Test
-//    public void testCreateOrder() {
-//        Client expectedClient = new Client(0, "Рая");
-//        Order order = new Order(0, expectedClient);
-//
-//        assertEquals(expectedClient, order.getClient());
-//        assertEquals(order.getTotalPrice(), 0, "Проверка цены");
-//        //assertEquals(order.isDiscountApplied(), false);
-//        assertFalse(order.isDiscountApplied());
-//        assertEquals(order.getCart().size(), 0);
-//    }
 
     @Test
-    //проверка добавления конкретоного товара (заказа) в корзину
+    @DisplayName("Созданный товар добавляется в корзину")
     public void testCorrectItemAddedToCart() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
         order.addItem(item);
-        assertTrue(order.getCart().containsKey(item));// проверяем, что именно этот товар был добавлен в корзину
+        assertTrue(order.getCart().containsKey(item));
     }
 
     @Test
-    //проверка того,что после добавленния одного товара в корзину, количичество товаров в корзине увеличилось на 1
-    public void testCorrectSizeCart() {
+    @DisplayName("После добавленния товара в корзину, количичество товаров в корзине увеличилось на 1")
+    public void correctSizeCart() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
@@ -58,17 +45,18 @@ public class OrderTest {
     }
 
     @Test
-    //проверка того,что после добавленния одного товара в корзину, её сумма увеличилась на сумму стоимости товара
-    public void testCorrectTotalPrice() {
+    @DisplayName("После добавленния товара в корзину, её сумма увеличилась на сумму стоимости товара")
+    public void correctTotalPrice() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
         order.addItem(item);
         assertEquals(order.getTotalPrice(), 100000.00);
     }
+
     @Test
-    //проверка того,что после добавленния второго товара в корзину, заказ дбавился, а не перезаписался
-    public void testCorrectSizeCartTwo() {
+    @DisplayName("После добавленния второго товара в корзину, заказ дбавился, а не перезаписался")
+    public void correctSizeCartTwo() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
@@ -79,95 +67,56 @@ public class OrderTest {
     }
 
     @Test
-    //проверка того, что скидка применяется вообще
-    public void testApplyDiscount() {
+    @DisplayName("Скидка применяется")
+    public void applyDiscount() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
-
         order.addItem(item);
         order.applyDiscount(PromoCodes.FIRST_ORDER.getDiscount());
-
         assertTrue(order.isDiscountApplied());
     }
 
     @Test
-    //проверка того, что применяется парвильная скидка
-    public void testApplyCorrectDiscount() {
+    @DisplayName("Применяется парвильная скидка")
+    public void applyCorrectDiscount() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
-
         order.addItem(item);
         order.applyDiscount(PromoCodes.FIRST_ORDER.getDiscount());
-
         assertEquals(80000.00, order.getTotalPrice());
     }
 
     @Test
-    // проверка того, что скидку можно применить один раз
-    public void testApplyDiscountOnce() {
+    @DisplayName("Скидку можно применить только один раз")
+    public void applyDiscountOnce() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
         order.addItem(item);
-
         order.applyDiscount(PromoCodes.FIRST_ORDER.getDiscount());
-        order.applyDiscount(PromoCodes.FIRST_ORDER.getDiscount());
-
+        order.applyDiscount(PromoCodes.HAPPY_HOUR.getDiscount());
         assertEquals(order.getTotalPrice(), 80000.00);
     }
 
-
     @Test
-    public void testGetClient() {
+    @DisplayName("Получение правильного клиента при создании заказа")
+    public void getClient() {
         Client expectedClient = new Client(0, "Рая");
         Order order = new Order(0, expectedClient);
         assertEquals(expectedClient, order.getClient());
     }
 
     @Test
-    // проверка получения правильного id клиента при создании заказа
-    public void testGetClientId() {
+    @DisplayName("Получение правильного id клиента при создании заказа")
+    public void getClientId() {
         Client expectedClient = new Client(1, "Рая");
         Order order = new Order(0, expectedClient);
-
-        int actual = order.getClient().getId();
-        //int expected = 1;
-        int expected = expectedClient.getId();
-
-        assertEquals(actual, expected);
+        assertEquals(1, order.getClient().getId());
     }
 }
 
 
 
-//    @Test
-//    public void testCorrectIdWhenCreateOrder1() {
-//        Client client = new Client(0, "Рая");
-//        Order order = new Order(0, client);
-//
-//        int actual = order.getId();
-//        int expected = 0;
-//
-//        assertEquals(actual, expected);
 
-
-
-
-
-//    @Test
-//    public void testAddItem() {
-//        Client expectedClient = new Client(0, "Рая");
-//        Order order = new Order(0, expectedClient);
-//        Item item = new Item(1, "Ноутбук", Category.LAPTOPS, 100000.00);
-//        Item item1 = new Item(2, "Ноутбук", Category.LAPTOPS, 100000.00);
-//        order.addItem(item);
-//        order.addItem(item1);
-//        assertEquals(order.getCart().size(), 2);
-//        assertTrue(order.getCart().containsKey(item));
-//        assertTrue(order.getCart().containsKey(item1));
-//        assertEquals(order.getTotalPrice(), 200000.00);
-//
-//
-//    }
