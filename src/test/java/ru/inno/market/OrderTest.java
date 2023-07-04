@@ -10,11 +10,6 @@ import ru.inno.market.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTest {
-    @BeforeEach
-     public void setUp() {
-    Client client = new Client(0, "Рая");
-    Order order = new Order(0, client);
-}
 
     @Test
     @DisplayName("Возвращение корректного ID созданного заказа")
